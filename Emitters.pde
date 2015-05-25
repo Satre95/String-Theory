@@ -6,19 +6,39 @@ class Emitter {
   float speed, angle;
   int spawn_count;
   Spawn[] spawn;
-  
-  Emitter(float temp_size, int temp_strength, float temp_x, float temp_y, int temp_red, int temp_green, int temp_blue) {
-    size = temp_size;
-    spawn_count = temp_strength;
-    pos =  new PVector(temp_x, temp_y);
-    species = color(temp_red, temp_green, temp_blue);
-//    species = color(0);
-    pos_old = new PVector(pos.x, pos.y);
-    speed = random(1, 3);
+
+  ///Constructor to create an emitter that outputs a color spawn.
+  Emitter(float size, int spawn_count, float x, float y, int red, int green, int blue) {
+    this.size = size;
+    this.spawn_count = spawn_count;
+
+    pos =  new PVector(x, y);
+    pos_old = new PVector(x, y);
+
+    species = color(red, green, blue);
+    speed = random(1.7f, 2.7f);
+
     spawn = new Spawn[spawn_count];
-    for(int i = 0; i< spawn_count; i++)
-      spawn[i] = new Spawn(random(5, 10), species, random(pos.x - size, pos.x + size), random(pos.y - size, pos.y + size), random(0, TWO_PI));
+    for ( int i = 0; i < spawn_count; i++) {
+      spawn[i] = new Spawn(size / spawn_count, species, pos.x, pos.y, random(0, TWO_PI ) );
+    }
   }
+
+  ///Comstructor to create a new emitter with monochrome spawn
+  Emitter( float size, int spawn_count, float x, float y, int whiteColor ) {
+    this.size = size;
+    this.spawn_count = spawn_count;
+    this.species = color(whiteColor);
+    this.pos = new PVector(x, y);
+    this.pos_old = new PVector(x, y);
+
+    this.speed = random( 5, 7 );
+    this.spawn = new Spawn[spawn_count];
+    for ( int i = 0; i < spawn_count; i++) {
+      spawn[i] = new Spawn( size / spawn_count, species, pos.x, pos.y, random(0, TWO_PI ) );
+    }
+  }
+
 
   void Update() {
     noiseSeed(E_noise_val);
@@ -32,21 +52,33 @@ class Emitter {
       out_of_bounds = false;
       pos_old.set(pos);
     }
-    for(int i = 0; i< attract_count; i++) 
-      for(int j =0; j < spawn_count; j++) 
-        if(dist(spawn[j].pos.x, spawn[j].pos.y, attractors[i].pos.x, attractors[i].pos.y) < attractors[i].size/3)
-          spawn[j] = new Spawn(random(5, 10), species, random(pos.x - size, pos.x + size), random(pos.y - size, pos.y + size), random(0, TWO_PI));
-    strokeWeight(1);
-    stroke(255);
-    fill(species);
-//    ellipse(pos.x, pos.y, size, size);
+    for (Attractor attractor : attractors ) {
+      for (int j =0; j < spawn_count; j++) {
+        float spawnX = spawn[j].pos.x;
+        float spawnY = spawn[j].pos.y;
+        float attractorX = attractor.pos.x;
+        float attractorY = attractor.pos.y;
+        
+        if (dist(spawnX, spawnY, attractorX, attractorY) < attractor.size/3 || spawn[j].checkIfOutOfBounds() ) {
+          spawn[j] = new Spawn( size / spawn_count, species, pos.x, pos.y, random(0, TWO_PI ) );
+        } 
+      }
+    }
+
+
+    if ( showMacroBodies ) {
+      noStroke();
+      fill(species);
+      ellipse(pos.x, pos.y, size, size);
+    }
+
     pos_old.set(pos);
     Emit();
   }
 
   void Emit() {
-    for (int k = 0; k < spawn_count; k++) {
-      spawn[k].Move();
+    for ( Spawn aSpawn : spawn ) {
+      aSpawn.Move();
     }
   }
 }
