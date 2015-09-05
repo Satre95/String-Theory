@@ -3,18 +3,18 @@
  Based on Swarm Processing Concept
  Siddharth Atre
  ***********************************/
+ 
+import processing.pdf.*;
+ 
 //Master Vars, Set by user.
-
-final int resW = 1920;
-final int resH = 1080;
 final float G = 6.67 * pow(10, -11);
 final int attract_count = 5;
 final int emit_count = 4;
 final int frame_max = 2300;
-final int spawn_strength = (int) random(900, 1000);
+final int spawn_strength = (int) random(100, 300);
 final boolean showMacroBodies = false;
-final boolean showLiveAnimation = true;
-float opacity = 30;
+final boolean showLiveAnimation = false;
+float opacity = 5;
 final boolean showPathTrace = true;
 final String Framerate = "Framerate: ";
 final String AVG_FRAMERATE = "Avg. Framerate was: ";
@@ -47,7 +47,7 @@ The various forms of representation of String Theory
  - 2 is color on black
  - 3 is color on white.
  */
-int animationMode = 0;
+int animationMode = 3;
 
 boolean showSpawnAsLines = false;
 
@@ -58,9 +58,9 @@ Emitter[] emitters = new Emitter[emit_count];
 
 void setup() {
   println( "Starting Animation" );
-  size(displayWidth, displayHeight, P2D);
-//  size(displayWidth, displayHeight, P2D);
-  smooth();
+  fullScreen(P2D);
+  pixelDensity(displayDensity());
+  smooth(8);
   frameRate(60);
   background(back);
 
@@ -109,6 +109,12 @@ void draw() {
     } else {
       background( back );
     }
+  } else if( !showLiveAnimation && showPathTrace ) {
+      pushMatrix();
+      noStroke();
+      fill( back, 0.5 );
+      rect(0, 0, width, height);
+      popMatrix();
   }
 
   frame++;
@@ -125,6 +131,7 @@ void draw() {
   //    save("Particulate.tif");
   //    exit();
   //  }
+  /*
   if (frame > animationSwitchFrame) {
     //reset the Attractor and Emitter noise seeds.
     A_noise_val = (int)random(10000);
@@ -140,7 +147,7 @@ void draw() {
     
     println(AVG_FRAMERATE + avgFramerate );
   }
-  
+  */
   prevFramerate = frameRate;
 }
 
@@ -207,5 +214,9 @@ void keyReleased() {
     println("Frame Count: ", frame_total);
     exit();
   }
+  if( key == 's' ) {
+      String imageName = "Particulate_" + frame_total + ".tif";
+      save(imageName);
+      println( "Saved image: " + imageName);
+  }
 }
-
