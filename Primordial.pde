@@ -60,18 +60,22 @@ Attractor[] attractors = new Attractor[attract_count];
 Emitter[] emitters = new Emitter[emit_count];
 
 void setup() {
-    size(1800, 1200, P2D);
-    //fullScreen(P2D);
-    //pixelDensity(displayDensity());
-    smooth(8);
-    frameRate(60);
-    background(back);
+    if (!drawToGraphicsBuffer) {
+        println("Damn It");
+        size(1800, 1200, P2D);
+        //fullScreen(P2D);
+        //pixelDensity(displayDensity());
+        smooth(8);
+        frameRate(60);
+        background(back);
+    }
 
     Date today = new Date();
     //image = createGraphics( 1800, 1200, PDF, "data/String-Theory-" + today.toString() + ".pdf");
-    image = createGraphics(18000, 12000, P2D);
+    image = createGraphics(18000, 12000);
     image.beginDraw();
     image.smooth(8);
+    image.background(255);
 
     //get the order of magnitude of the canvas' area.
     canvasAreaMagnitude = log(width * height ) / log( 10 );
