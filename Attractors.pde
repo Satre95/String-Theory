@@ -9,7 +9,7 @@ class Attractor {
         this.strength = strength;
         pos =  new PVector(x, y);
 
-        speed = random(2.4f, 3.0f);
+        speed = random(2.4f, 2.6f);
         pos_old = new PVector(x, y);
     }
 
@@ -18,14 +18,23 @@ class Attractor {
         angle = noise(pos.x/noiseScale, pos.y/noiseScale) * noiseStrength;
         pos.x += cos(angle) * speed;
         pos.y += sin(angle) * speed;
-        if (pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0) out_of_bounds = true;
-        if (out_of_bounds) {
-            pos.x = random(width);
-            pos.y = random(height);
-            out_of_bounds = false;
-            pos_old.set(pos);
+        if (drawToGraphicsBuffer) {
+            if (pos.x > image.width || pos.x < 0 || pos.y > image.height || pos.y < 0) out_of_bounds = true;
+            if (out_of_bounds) {
+                pos.x = random(image.width);
+                pos.y = random(image.height);
+                out_of_bounds = false;
+                pos_old.set(pos);
+            }
+        } else {
+            if (pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0) out_of_bounds = true;
+            if (out_of_bounds) {
+                pos.x = random(width);
+                pos.y = random(height);
+                out_of_bounds = false;
+                pos_old.set(pos);
+            }
         }
-
         if ( showMacroBodies ) {
             if (drawToGraphicsBuffer) {
                 image.noStroke();

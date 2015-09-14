@@ -25,7 +25,7 @@ class Emitter {
     }
 
     ///Comstructor to create a new emitter with monochrome spawn
-    Emitter( float size, int spawn_count, float x, float y, int whiteColor ) {
+    Emitter( float size, int spawn_count, float x, float y, color whiteColor ) {
         this.size = size;
         this.spawn_count = spawn_count;
         this.species = color(whiteColor);
@@ -38,6 +38,23 @@ class Emitter {
             spawn[i] = new Spawn( size / spawn_count, species, pos.x, pos.y, random(0, TWO_PI ) );
         }
     }
+    
+    ////Constructor that takes in the spawn color as a color object.
+    //Emitter(float size, int spawn_count, float x, float y, color theColor) {
+    //    this.size = size;
+    //    this.spawn_count = spawn_count;
+
+    //    pos =  new PVector(x, y);
+    //    pos_old = new PVector(x, y);
+
+    //    species = theColor;
+    //    speed = random(1.7f, 2.5f);
+
+    //    spawn = new Spawn[spawn_count];
+    //    for ( int i = 0; i < spawn_count; i++) {
+    //        spawn[i] = new Spawn(size / spawn_count, species, pos.x, pos.y, random(0, TWO_PI ) );
+    //    }
+    //}
 
 
     void Update() {
@@ -45,12 +62,23 @@ class Emitter {
         angle = noise(pos.x/noiseScale, pos.y/noiseScale) * noiseStrength;
         pos.x += cos(angle) * speed;
         pos.y += sin(angle) * speed;
-        if (pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0) out_of_bounds = true;
-        if (out_of_bounds) {
-            pos.x = random(width);
-            pos.y = random(height);
-            out_of_bounds = false;
-            pos_old.set(pos);
+
+        if (drawToGraphicsBuffer ) {
+            if (pos.x > image.width || pos.x < 0 || pos.y > image.height || pos.y < 0) out_of_bounds = true;
+            if (out_of_bounds) {
+                pos.x = random(image.width);
+                pos.y = random(image.height);
+                out_of_bounds = false;
+                pos_old.set(pos);
+            }
+        } else {
+            if (pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0) out_of_bounds = true;
+            if (out_of_bounds) {
+                pos.x = random(width);
+                pos.y = random(height);
+                out_of_bounds = false;
+                pos_old.set(pos);
+            }
         }
         for (Attractor attractor : attractors ) {
             for (int j =0; j < spawn_count; j++) {

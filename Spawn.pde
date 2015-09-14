@@ -11,7 +11,7 @@ class Spawn {
         pos = new PVector (x, y);
         pos_old = new PVector(x, y);
 
-        speed = random(2.1f, 3.1f);
+        speed = random(1.9f, 3.0f);
         this.angle = angle;
 
         acceler = new PVector(0, 0);
@@ -28,15 +28,15 @@ class Spawn {
 
         pos.x += cos(angle) * (speed+acceler.mag());
         pos.y += sin(angle) * (speed+acceler.mag());
-        
+
         draw();
-        
+
         pos_old.set(pos);
     }
 
     void draw() {
-        //strokeWeight(spawnStrokeWeight);
         if (drawToGraphicsBuffer) {
+            image.strokeWeight(spawnStrokeWeight);
             image.stroke(species, opacity);
             if (showSpawnAsLines) {
                 image.line(pos.x, pos.y, pos_old.x, pos_old.y);
@@ -44,7 +44,8 @@ class Spawn {
                 image.point(pos.x, pos.y);
             }
         } else {
-            stroke(species, opacity);
+            strokeWeight(spawnStrokeWeight);
+            stroke(species, opacity); //<>//
             if (showSpawnAsLines) {
                 line(pos.x, pos.y, pos_old.x, pos_old.y);
             } else {
@@ -73,6 +74,10 @@ class Spawn {
     }
 
     boolean checkIfOutOfBounds() {
-        return (pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0);
+        if (drawToGraphicsBuffer) {
+            return (pos.x > image.width || pos.x < 0 || pos.y > image.height || pos.y < 0);
+        } else {
+            return (pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0);
+        }
     }
 }
